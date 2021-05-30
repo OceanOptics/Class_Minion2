@@ -8,6 +8,7 @@ import configparser
 import sys
 import pickle
 
+
 def flash():
         j = 0
         while j <= 2:
@@ -17,20 +18,43 @@ def flash():
                 time.sleep(.25)
                 j = j + 1
 
+
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 
+
+def parse_wpa_supplicant(filename='/etc/wpa_supplicant/wpa_supplicant.conf'):
+	with open(filename) as f:
+		lines = f.read().split('\n')
+		# Remove indentation and skip first and last line
+		lines = [l.strip() for l in lines[1:-1]]
+		# Parse all parameters up to ssid
+		# opts = dict()
+		for l in lines:
+			foo = l.split('=')
+			if len(foo) == 2:
+				key, value = foo[0], foo[1]
+			else:
+				key = foo[0]
+				value = "=".join(foo[1:])
+			# opts[key] = value
+			if key == 'ssid':
+				return value[1:-1]  # remove quotes
+	return None
+
+wifi_ssid = parse_wpa_supplicant()
+
+
 def check_wifi():
 
-	if "Class_Minion_Hub" in os.popen(iwlist).read():
+	if wifi_ssid in os.popen(iwlist).read():
 		print("WIFI!!")
 		status = "Connected"
-		net_status = os.popen(net_cfg).read()
-		if ".Class" in net_status:
-			os.system(ifswitch)
-		else:
-			print("You have Class_Minions!")
-
+		# net_status = os.popen(net_cfg).read()
+		# if ".Class" in net_status:
+		# 	os.system(ifswitch)
+		# else:
+		# 	print("You have Class_Minions!")
 	else:
 		print("No WIFI found.")
 		status = "Not Connected"
@@ -87,27 +111,6 @@ iniTmp = str2bool(config['Sampling_scripts']['Temperature'])
 iniTpp = str2bool(config['Sampling_scripts']['TempPres'])
 inicus = str2bool(config['Sampling_scripts']['Custom'])
 
-
-def parse_wpa_supplicant(filename='/etc/wpa_supplicant/wpa_supplicant.conf'):
-	with open(filename) as f:
-		lines = f.read().split('\n')
-		# Remove indentation and skip first and last line
-		lines = [l.strip() for l in lines[1:-1]]
-		# Parse all parameters up to ssid
-		# opts = dict()
-		for l in lines:
-			foo = l.split('=')
-			if len(foo) == 2:
-				key, value = foo[0], foo[1]
-			else:
-				key = foo[0]
-				value = "=".join(foo[1:])
-			# opts[key] = value
-			if key == 'ssid':
-				return value[1:-1]  # remove quotes
-	return None
-
-wifi_ssid = parse_wpa_supplicant()
 
 TotalSamples = (((Ddays*24)+Dhours))/Srate
 
