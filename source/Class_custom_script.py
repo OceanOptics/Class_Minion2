@@ -8,7 +8,7 @@ firstp = open("timesamp.pkl","rb")
 timestamp = pickle.load(firstp)
 
 config = configparser.ConfigParser()
-config.read('/media/Data/Class_Minion_config.ini')
+config.read('/home/pi/Documents/Class_Minion_scripts/Class_Minion_config.ini')
 
 inicus = bool(config['Sampling_scripts']['Custom'])
 

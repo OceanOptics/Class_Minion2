@@ -40,7 +40,7 @@ def check_wifi():
 	return status
 
 # Get telemetry from scripts
-sys.path.append('/media/Data/')
+# sys.path.append('/media/Data/')
 sys.path.append('/home/pi/Documents/Class_Minion_scripts')
 
 samp_time = os.popen("sudo hwclock -u -r").read()
@@ -67,7 +67,7 @@ GPIO.output(Press_IO, 1)
 GPIO.output(wifi, 1)
 
 config = configparser.ConfigParser()
-config.read('/media/Data/Class_Minion_config.ini')
+config.read('/home/pi/Documents/Class_Minion_scripts/Class_Minion_config.ini')
 
 Ddays = int(config['Deployment_Time']['days'])
 Dhours = int(config['Deployment_Time']['hours'])
@@ -116,7 +116,8 @@ scriptNames = ["Temp.py", "TempPres.py", "Class_custom_script.py", "Class_Minion
 
 if __name__ == '__main__':
 
-	if len(os.listdir('/media/Data/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/media/Data/Class_Minion_data')) >= TotalSamples:
+	# if len(os.listdir('/media/Data/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/media/Data/Class_Minion_data')) >= TotalSamples:
+	if len(os.listdir('/home/pi/Documents/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/home/pi/Documents/Class_Minion_data')) >= TotalSamples:
         	GPIO.output(Press_IO, 0)
 
 	else:
@@ -127,7 +128,7 @@ if __name__ == '__main__':
 			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/TempPres.py &')
 
 		if inicus == True:
-			os.system('sudo python /media/Data/Class_custom_script.py &')
+			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/Class_custom_script.py &')
 
 		if iniImg == True:
 			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/Class_Minion_image.py &')

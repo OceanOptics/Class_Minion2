@@ -49,28 +49,10 @@ os.system("sudo sed -i '/# Print the IP/i#sudo python /home/pi/Documents/Class_M
 
 
 # Remove self from rc.local and configure deployment
-
-#Startup = yes_no('Begin sampling once install is complete? [Y/N] : ')
-
-# Open rc.local
 with open('/etc/rc.local', 'r') as file :
   rclocal = file.read()
-'''
-if Startup == True:
-	print "Nothing do do here"
-elif Startup == False:
-	rclocal = rclocal.replace('#sudo python /home/pi/Documents/Class_Minion_scripts/Keep_Me_Alive.py', 'sudo python /home/pi/Documents/Class_Minion_scripts/Keep_Me_Alive.py')
-	rclocal = rclocal.replace('sudo python /home/pi/Documents/Class_Minion_scripts/Class_Minion.py', '#sudo python /home/pi/Documents/Class_Minion_scripts/Class_Class_Minion.py')
-	rclocal = rclocal.replace('sudo python /home/pi/Documents/Class_Minion_scripts/ADXL345_Sampler_100Hz.py', '#sudo python /home/pi/Documents/Class_Minion_scripts/ADXL345_Sampler_100Hz.py')
-	rclocal = rclocal.replace('sudo python /home/pi/Documents/Class_Minion_scripts/Temp+Pres.py', '#sudo python /home/pi/Documents/Class_Minion_scripts/Temp+Pres.py')
-
-else:
-	print "WTH did you do??"
-'''
 # Replace the RTC string
 rclocal = rclocal.replace('sudo python /home/pi/Documents/Class_Minion_scripts/RTC_Finish.py', '')
-
-# Write the file out again
 with open('/etc/rc.local', 'w') as file:
   file.write(rclocal)
 

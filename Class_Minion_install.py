@@ -66,7 +66,7 @@ IP_addr = input('What local IP extension would you like to use? 192.168.0.')
 
 if len(str(IP_addr)) > 3 or len(str(IP_addr)) < 1 or IP_addr <= 1 or IP_addr >= 255:
 	IP_fail = 1
-	while IP_fail == 1: 
+	while IP_fail == 1:
 		IP_addr = input('Illigal IP address: 192.168.0.%s! Please try again: ' % IP_addr)
 		if len(str(IP_addr)) > 3 or len(str(IP_addr)) < 1 or IP_addr <= 1 or IP_addr >= 255:
 			pass
@@ -82,7 +82,7 @@ os.system('sudo cp source/dhcp/dhcpcd.conf source/dhcp/dhcpcd.Class /etc/')
 
 # Open dhcpcd.Class_Minion
 with open('/etc/dhcpcd.Class', 'r') as file :
-    Class_Minion_dhcp = file.read()
+	Class_Minion_dhcp = file.read()
 
 # Replace the IP string
 Class_Minion_dhcp = Class_Minion_dhcp.replace('XXX', str(IP_addr))
@@ -90,38 +90,40 @@ Class_Minion_dhcp = Class_Minion_dhcp.replace('XXX', str(IP_addr))
 # Write the file out again
 with open('/etc/dhcpcd.Class', 'w') as file:
     file.write(Class_Minion_dhcp)
-  
-# Set up wifi
 
-os.system("sudo sh -c 'cat source/dhcp/wpa_supplicant.txt >> /etc/wpa_supplicant/wpa_supplicant.conf'")
+# DISABLE CUSTOM WIFI as already set after imaging
+# # Set up wifi
+# os.system("sudo sh -c 'cat source/dhcp/wpa_supplicant.txt >> /etc/wpa_supplicant/wpa_supplicant.conf'")
 
-# Enable the splash screen easter egg
-	
-Debug = yes_no('Do you want to enable debug mode? [Y/N] : ')
+# DISABLE Easter egg due to error
+# # Enable the splash screen easter egg
+#
+# Debug = yes_no('Do you want to enable debug mode? [Y/N] : ')
+#
+# os.system('sudo mv /usr/share/plymouth/themes/pix/splash.png /usr/share/plymouth/themes/pix/splash.png.old')
+# os.system('sudo cp source/splash.png /usr/share/plymouth/themes/pix/')
+#
+# if Debug == True:
+# 	os.system("sudo raspi-config nonint do_boot_splash 1")
+# elif Debug == False:
+# 	os.system("sudo raspi-config nonint do_boot_splash 0")
+# else:
+# 	print("WTH did you do??")
 
-os.system('sudo mv /usr/share/plymouth/themes/pix/splash.png /usr/share/plymouth/themes/pix/splash.png.old')
-os.system('sudo cp source/splash.png /usr/share/plymouth/themes/pix/')
-
-if Debug == True:
-	os.system("sudo raspi-config nonint do_boot_splash 1")
-elif Debug == False:
-	os.system("sudo raspi-config nonint do_boot_splash 0")
-else:
-	print("WTH did you do??")
-
-# Mount SD card for use
-os.system("sudo mkdir /media/Data")
-
-UUID = USB_Conf()
-
-print(UUID)
-
-while UUID != os.popen('sudo blkid -o value /dev/sda1').read().splitlines()[3]:
-	USB_Conf()
-
-os.system("sudo sed -i -e '$a PARTUUID=%s /media/Data      ntfs   defaults  0  0' /etc/fstab" % UUID)
-
-os.system('sudo mount -a')
+# DISABLE Extra USB storage
+# # Mount SD card for use
+# os.system("sudo mkdir /media/Data")
+#
+# UUID = USB_Conf()
+#
+# print(UUID)
+#
+# while UUID != os.popen('sudo blkid -o value /dev/sda1').read().splitlines()[3]:
+# 	USB_Conf()
+#
+# os.system("sudo sed -i -e '$a PARTUUID=%s /media/Data      ntfs   defaults  0  0' /etc/fstab" % UUID)
+#
+# os.system('sudo mount -a')
 
 
 # Set up external software and raspi-config
@@ -139,7 +141,8 @@ os.system('sudo raspi-config nonint do_rgpio 0')
 # Add alias list to .bashrc
 os.system('sudo cat source/Class_Minion_alias.txt >> /home/pi/.bashrc')
 # Create folders
-os.system('sudo mkdir /home/pi/Documents/Class_Minion_tools /home/pi/Documents/Class_Minion_pics /home/pi/Documents/Class_Minion_data /home/pi/Documents/Class_Minion_scripts /media/Data/Class_Minion_pics /media/Data/Class_Minion_data')
+# os.system('sudo mkdir /home/pi/Documents/Class_Minion_tools /home/pi/Documents/Class_Minion_pics /home/pi/Documents/Class_Minion_data /home/pi/Documents/Class_Minion_scripts /media/Data/Class_Minion_pics /media/Data/Class_Minion_data')
+os.system('sudo mkdir /home/pi/Documents/Class_Minion_tools /home/pi/Documents/Class_Minion_pics /home/pi/Documents/Class_Minion_data /home/pi/Documents/Class_Minion_scripts')
 # Clone repos
 os.chdir('source/drivers/')
 os.system('git clone https://github.com/bluerobotics/tsys01-python.git')
@@ -167,7 +170,7 @@ os.system("echo 'dtoverlay=i2c-rtc,pcf8523' >> /boot/config.txt")
 # Move scripts to local build
 os.system('sudo cp source/Keep_Me_Alive.py source/dhcp-configure.py source/dhcp-switch.py source/RTC-set.py source/Shutdown.py source/flasher.py source/avrdude_translator.py /home/pi/Documents/Class_Minion_tools/')
 os.system('sudo cp -r source/drivers/tsys01-python/tsys01 source/TempPres.py source/Temp.py source/drivers/ms5837-python/ms5837.py source/RTC_Finish.py source/Class_Minion_DeploymentHandler.py source/Class_Minion_image.py /home/pi/Documents/Class_Minion_scripts')
-os.system('sudo cp source/Class_custom_script.py source/Class_Minion_config.ini /media/Data/')
+os.system('sudo cp source/Class_custom_script.py source/Class_Minion_config.ini /home/pi/Documents/Class_Minion_scripts')
 os.system('sudo cp source/Remove_Before_Deployment.txt /home/pi/Documents/Class_Minion_pics/')
 
 # Set pi to launch rest of script after reboot

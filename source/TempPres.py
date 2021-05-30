@@ -5,7 +5,7 @@ import configparser
 import pickle
 
 config = configparser.ConfigParser()
-config.read('/media/Data/Class_Minion_config.ini')
+config.read('/home/pi/Documents/Class_Minion_scripts/Class_Minion_config.ini')
 
 Stime = config['Data_Sample']['Class_Minion_sample_time']
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 	# Collect time value from pickle on desktop
 	firstp = open("timesamp.pkl","rb")
 	samp_time = pickle.load(firstp)
-	path, dirs, files = next(os.walk("/media/Data/Class_Minion_data/"))
+	path, dirs, files = next(os.walk("/home/pi/Documents/Class_Minion_data/"))
 	samp_count = str(len(files)+1)
 	samp_time = samp_count + "-" + samp_time
 
