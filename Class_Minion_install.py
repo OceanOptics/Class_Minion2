@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 import time
 import os
 
-print "Welcome to the Class Minion installer 1.0! \n"
+print("Welcome to the Class Minion installer 2.0!\n")
 
 ini_dir = os.getcwd()
 
@@ -152,7 +152,7 @@ os.system("echo 'dtoverlay=i2c-rtc,pcf8523' >> /boot/config.txt")
 
 # Move scripts to local build
 os.system('sudo cp source/Keep_Me_Alive.py source/dhcp-configure.py source/dhcp-switch.py source/RTC-set.py source/Shutdown.py source/flasher.py source/avrdude_translator.py /home/pi/Class_Minion_tools/')
-os.system('sudo cp -r source/drivers/tsys01-python/tsys01 source/TempPres.py source/Temp.py source/drivers/ms5837-python/ms5837.py source/Class_Minion_finish_install.py source/Class_Minion_DeploymentHandler.py source/Class_Minion_image.py /home/pi/Class_Minion_scripts')
+os.system('sudo cp -r source/TempPres.py source/Temp.py source/Class_Minion_finish_install.py source/Class_Minion_DeploymentHandler.py source/Class_Minion_image.py /home/pi/Class_Minion_scripts')
 os.system('sudo cp source/Class_custom_script.py source/Class_Minion_config.ini /home/pi/Class_Minion_scripts')
 # os.system('sudo cp source/Remove_Before_Deployment.txt /home/pi/Class_Minion_pics/')
 

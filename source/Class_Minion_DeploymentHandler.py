@@ -88,30 +88,36 @@ iniTpp = str2bool(config['Sampling_scripts']['TempPres'])
 inicus = str2bool(config['Sampling_scripts']['Custom'])
 
 
-print(Ddays)
-print(Dhours)
-print(Srate)
+def parse_wpa_supplicant(filename='/etc/wpa_supplicant/wpa_supplicant.conf'):
+	with open(filename) as f:
+		lines = f.read().split('\n')
+		# Remove indentation and skip first and last line
+		lines = [l.strip() for l in lines[1:-1]]
+		# Parse all parameters up to ssid
+		# opts = dict()
+		for l in lines:
+			foo = l.split('=')
+			if len(foo) == 2:
+				key, value = foo[0], foo[1]
+			else:
+				key = foo[0]
+				value = "=".join(foo[1:])
+			# opts[key] = value
+			if key == 'ssid':
+				return value[1:-1]  # remove quotes
+	return None
 
-
+wifi_ssid = parse_wpa_supplicant()
 
 TotalSamples = (((Ddays*24)+Dhours))/Srate
 
-print(TotalSamples)
-
 ifswitch = "sudo python /home/pi/Class_Minion_tools/dhcp-switch.py"
-
-iwlist = 'sudo iwlist wlan0 scan | grep "Class_Minion_Hub"'
-
+iwlist = 'sudo iwlist wlan0 scan | grep "%s"' % wifi_ssid
 net_cfg = "ls /etc/ | grep dhcp"
-
 ping_hub = "ping 192.168.0.1 -c 1"
-
 ping_google = "ping google.com -c 1"
-
 subpkill = "sudo killall python"
-
 ps_test = "pgrep -a python"
-
 scriptNames = ["Temp.py", "TempPres.py", "Class_custom_script.py", "Class_Minion_image.py"]
 
 if __name__ == '__main__':
@@ -133,16 +139,13 @@ if __name__ == '__main__':
 			os.system('sudo python /home/pi/Class_Minion_scripts/Class_Minion_image.py &')
 
 	while(any(x in os.popen(ps_test).read() for x in scriptNames)) == True:
-
-		## Check for wifi
-
 		if check_wifi() == "Connected":
+			# Stop sampling
 			flash()
 			os.system(subpkill)
 			exit(1)
-
 		else:
-			print("Sampling")
+			# Sampling
 			time.sleep(5)
 
 	print('Goodbye')
