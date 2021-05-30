@@ -122,7 +122,7 @@ os.system('sudo raspi-config nonint do_ssh 0')
 os.system('sudo raspi-config nonint do_i2c 0') 
 os.system('sudo raspi-config nonint do_rgpio 0')
 # Add alias list to .bashrc
-os.system('sudo cat source/Class_Minion_alias.txt >> /home/pi/.bashrc')
+os.system('sudo cat source/minion_alias.txt >> /home/pi/.bashrc')
 # Create folders
 # os.system('sudo mkdir /home/pi/Class_Minion_tools /home/pi/Class_Minion_pics /home/pi/Class_Minion_data /home/pi/Class_Minion_scripts /media/Data/Class_Minion_pics /media/Data/Class_Minion_data')
 os.system('sudo mkdir /home/pi/Class_Minion_tools /home/pi/Class_Minion_pics /home/pi/Class_Minion_data /home/pi/Class_Minion_scripts')

@@ -43,7 +43,7 @@ if Class in files:
 	print "Copying .Class to .conf"
 	#plz_wait()
 	os.system('sudo rm -rf /etc/dhcpcd.Class')
-	print "Now you have ClassS!"
+	print "Now you have Class!"
 
 elif internet in files:
         os.system('sudo cp /etc/dhcpcd.conf /etc/dhcpcd.Class')

@@ -2,6 +2,7 @@
 
 import RPi.GPIO as GPIO
 
+light = 12
 wifi = 7
 
 GPIO.setmode(GPIO.BOARD)

@@ -2,7 +2,7 @@
 alias clear-minion-pics='sudo rm -rf /home/pi/Class_Minion_pics/*'
 alias clear-minion-data='sudo rm -rf /home/pi/Class_Minion_data/*'
 alias list-minion-pics='ls /home/pi/Class_Minion_pics/'
-alias kill-minion='sudo killall Class_Class_Minion.py shutdown.py python'
+alias kill-minion='sudo killall Class_Class_Minion.py Shutdown.py python'
 alias ifswitch='sudo python /home/pi/Class_Minion_tools/dhcp-switch.py'
 alias rtc-set='sudo python /home/pi/Class_Minion_tools/RTC-set.py'
 alias minion-off='sudo python /home/pi/Class_Minion_tools/Shutdown.py'
