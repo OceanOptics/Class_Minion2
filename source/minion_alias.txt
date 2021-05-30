@@ -1,19 +1,11 @@
 # Class_Minion aliases to make life easy
-alias clear_Class_Minion_pics='sudo rm -rf /home/pi/Documents/Class_Minion_pics/*'
-
-alias clear_Class_Minion_data='sudo rm -rf /home/pi/Documents/Class_Minion_data/*'
-
-alias list-Class_Minion-pics='ls /home/pi/Documents/Class_Minion_pics/'
-
-alias kill-Class_Minion='sudo killall Class_Class_Minion.py shutdown.py python'
-
-alias ifswitch='sudo python /home/pi/Documents/Class_Minion_tools/dhcp-switch.py'
-
-alias RTC-set='sudo python /home/pi/Documents/Class_Minion_tools/RTC-set.py'
-
-alias Class_Minion-off='sudo python /home/pi/Documents/Class_Minion_tools/Shutdown.py'
-
-alias preview-Class_Minion='sudo raspivid -t 0'
-
-alias stay-on='sudo python ~/Documents/Class_Minion_tools/Keep_Me_Alive.py'
+alias clear-minion-pics='sudo rm -rf /home/pi/Class_Minion_pics/*'
+alias clear-minion-data='sudo rm -rf /home/pi/Class_Minion_data/*'
+alias list-minion-pics='ls /home/pi/Class_Minion_pics/'
+alias kill-minion='sudo killall Class_Class_Minion.py shutdown.py python'
+alias ifswitch='sudo python /home/pi/Class_Minion_tools/dhcp-switch.py'
+alias rtc-set='sudo python /home/pi/Class_Minion_tools/RTC-set.py'
+alias minion-off='sudo python /home/pi/Class_Minion_tools/Shutdown.py'
+alias preview-minion='sudo raspivid -t 0'
+alias stay-on='sudo python ~/Class_Minion_tools/Keep_Me_Alive.py'
 

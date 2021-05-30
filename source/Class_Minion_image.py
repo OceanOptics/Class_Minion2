@@ -10,11 +10,11 @@ import pickle
 GPIO.setwarnings(False)
 
 config = configparser.ConfigParser()
-config.read('/home/pi/Documents/Class_Minion_scripts/Class_Minion_config.ini')
+config.read('/home/pi/Class_Minion_scripts/Class_Minion_config.ini')
 
 firstp = open("timesamp.pkl")
 samp_time = pickle.load(firstp)
-path, dirs, files = next(os.walk("/home/pi/Documents/Class_Minion_data/"))
+path, dirs, files = next(os.walk("/home/pi/Class_Minion_data/"))
 samp_count = str(len(files)+1)
 samp_time = samp_count + "-" + samp_time
 
@@ -38,14 +38,14 @@ def picture():
         # Collect time value from pickle on desktop
         firstp = open("timesamp.pkl","rb")
         samp_time = pickle.load(firstp)
-        pic_count = str(len(os.listdir("/home/pi/Documents/Class_Minion_pics/"))+1)
+        pic_count = str(len(os.listdir("/home/pi/Class_Minion_pics/"))+1)
         pictime = pic_count + "-" + samp_time
         GPIO.output(light, 1)
         camera.resolution = (2592, 1944)
         camera.framerate = 15
         camera.start_preview()
     	time.sleep(10)
-    	camera.capture('/home/pi/Documents/Class_Minion_pics/%s.jpg' % pictime)
+    	camera.capture('/home/pi/Class_Minion_pics/%s.jpg' % pictime)
     	time.sleep(5)
     	camera.stop_preview()
         GPIO.output(light, 0)

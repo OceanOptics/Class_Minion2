@@ -44,19 +44,19 @@ os.system('sudo hwclock -w')
 
 # Write deployment scripts to rc.local
 
-os.system("sudo sed -i '/# Print the IP/isudo python /home/pi/Documents/Class_Minion_scripts/Class_Minion_DeploymentHandler.py &\n' /etc/rc.local")
-os.system("sudo sed -i '/# Print the IP/i#sudo python /home/pi/Documents/Class_Minion_scripts/Keep_Me_Alive.py \n' /etc/rc.local")
+os.system("sudo sed -i '/# Print the IP/isudo python /home/pi/Class_Minion_scripts/Class_Minion_DeploymentHandler.py &\n' /etc/rc.local")
+os.system("sudo sed -i '/# Print the IP/i#sudo python /home/pi/Class_Minion_scripts/Keep_Me_Alive.py \n' /etc/rc.local")
 
 
 # Remove self from rc.local and configure deployment
 with open('/etc/rc.local', 'r') as file :
   rclocal = file.read()
 # Replace the RTC string
-rclocal = rclocal.replace('sudo python /home/pi/Documents/Class_Minion_scripts/RTC_Finish.py', '')
+rclocal = rclocal.replace('sudo python /home/pi/Class_Minion_scripts/Class_Minion_finish_install.py', '')
 with open('/etc/rc.local', 'w') as file:
   file.write(rclocal)
 
-os.system('sudo python /home/pi/Documents/Class_Minion_tools/dhcp-switch.py')
+os.system('sudo python /home/pi/Class_Minion_tools/dhcp-switch.py')
 
 os.system('sudo reboot now')
 

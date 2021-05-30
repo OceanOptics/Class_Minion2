@@ -41,7 +41,7 @@ def check_wifi():
 
 # Get telemetry from scripts
 # sys.path.append('/media/Data/')
-sys.path.append('/home/pi/Documents/Class_Minion_scripts')
+sys.path.append('/home/pi/Class_Minion_scripts')
 
 samp_time = os.popen("sudo hwclock -u -r").read()
 samp_time = samp_time.split('.',1)[0]
@@ -67,7 +67,7 @@ GPIO.output(Press_IO, 1)
 GPIO.output(wifi, 1)
 
 config = configparser.ConfigParser()
-config.read('/home/pi/Documents/Class_Minion_scripts/Class_Minion_config.ini')
+config.read('/home/pi/Class_Minion_scripts/Class_Minion_config.ini')
 
 Ddays = int(config['Deployment_Time']['days'])
 Dhours = int(config['Deployment_Time']['hours'])
@@ -98,7 +98,7 @@ TotalSamples = (((Ddays*24)+Dhours))/Srate
 
 print(TotalSamples)
 
-ifswitch = "sudo python /home/pi/Documents/Class_Minion_tools/dhcp-switch.py"
+ifswitch = "sudo python /home/pi/Class_Minion_tools/dhcp-switch.py"
 
 iwlist = 'sudo iwlist wlan0 scan | grep "Class_Minion_Hub"'
 
@@ -116,22 +116,21 @@ scriptNames = ["Temp.py", "TempPres.py", "Class_custom_script.py", "Class_Minion
 
 if __name__ == '__main__':
 
-	# if len(os.listdir('/media/Data/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/media/Data/Class_Minion_data')) >= TotalSamples:
-	if len(os.listdir('/home/pi/Documents/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/home/pi/Documents/Class_Minion_data')) >= TotalSamples:
+	if len(os.listdir('/home/pi/Class_Minion_pics')) >= TotalSamples or len(os.listdir('/home/pi/Class_Minion_data')) >= TotalSamples:
         	GPIO.output(Press_IO, 0)
 
 	else:
 		if iniTmp == True:
-			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/Temp.py &')
+			os.system('sudo python /home/pi/Class_Minion_scripts/Temp.py &')
 
 		if iniTpp == True:
-			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/TempPres.py &')
+			os.system('sudo python /home/pi/Class_Minion_scripts/TempPres.py &')
 
 		if inicus == True:
-			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/Class_custom_script.py &')
+			os.system('sudo python /home/pi/Class_Minion_scripts/Class_custom_script.py &')
 
 		if iniImg == True:
-			os.system('sudo python /home/pi/Documents/Class_Minion_scripts/Class_Minion_image.py &')
+			os.system('sudo python /home/pi/Class_Minion_scripts/Class_Minion_image.py &')
 
 	while(any(x in os.popen(ps_test).read() for x in scriptNames)) == True:
 
