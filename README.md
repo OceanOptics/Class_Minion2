@@ -29,6 +29,14 @@ Class Minion runs with python 2.7
     sudo python Class_Minion_install.py
   
 
+When the RPi is turned on the script Class_Minion_DeploymentHandler.py is called. This script takes a picture and other measurements (optional), it then check if a known wifi is in range. If a wifi is in range it stays on, otherwise it turns off. This can result in a blocking behaviour if the wifi of choice is not available preventing to offload the data from the deployment. To test such behaviour the last line of Class_Minion_DeploymentHandler.py can be commented to prevent the halt to happen.
+
+    # turn on wifi
+    sudo ifconfig wlan0 up
+    # turn off wifi
+    sudo ifconfig wlan0 down
+    # run script to see if it finds wifi to connect and prevent halt of system
+    sudo python ~/Class_Minion_scripts/Class_Minion_DeploymentHandler.py
 
 ## Setup Arduino Nano
 Upload Low_Power_Pi/Low_Power_Pi.ino to the Arduino Nano using Arduino IDE.

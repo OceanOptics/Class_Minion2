@@ -29,7 +29,7 @@ def parse_wpa_supplicant(filename='/etc/wpa_supplicant/wpa_supplicant.conf'):
 		# Remove indentation and skip first and last line
 		lines = [l.strip() for l in lines[1:-1]]
 		# Parse all parameters up to ssid
-		# opts = dict()
+		ssid = []
 		for l in lines:
 			foo = l.split('=')
 			if len(foo) == 2:
@@ -39,29 +39,19 @@ def parse_wpa_supplicant(filename='/etc/wpa_supplicant/wpa_supplicant.conf'):
 				value = "=".join(foo[1:])
 			# opts[key] = value
 			if key == 'ssid':
-				return value[1:-1]  # remove quotes
-	return None
+				ssid.append(value[1:-1])
+				# return value[1:-1]  # remove quotes
+	return ssid
 
-wifi_ssid = parse_wpa_supplicant()
+known_ssids = parse_wpa_supplicant()
 
 
-def check_wifi():
-
-	if wifi_ssid in os.popen(iwlist).read():
-		print("WIFI!!")
-		status = "Connected"
-		# net_status = os.popen(net_cfg).read()
-		# if ".Class" in net_status:
-		# 	os.system(ifswitch)
-		# else:
-		# 	print("You have Class_Minions!")
-	else:
-		print("No WIFI found.")
-		status = "Not Connected"
-
-	print(status)
-
-	return status
+def wifi_connected():
+	scan_ssids = os.popen(iwlist).read()
+	for ssid in known_ssids:
+		if ssid in scan_ssids:
+			return True
+	return False
 
 # Get telemetry from scripts
 # sys.path.append('/media/Data/')
@@ -99,7 +89,6 @@ Dhours = int(config['Deployment_Time']['hours'])
 Stime = config['Data_Sample']['Class_Minion_sample_time']
 
 try:
-    float(test_string)
     Stime = float(Stime)
 except:
     Stime = float(.25)
@@ -115,7 +104,7 @@ inicus = str2bool(config['Sampling_scripts']['Custom'])
 TotalSamples = (((Ddays*24)+Dhours))/Srate
 
 ifswitch = "sudo python /home/pi/Class_Minion_tools/dhcp-switch.py"
-iwlist = 'sudo iwlist wlan0 scan | grep "%s"' % wifi_ssid
+iwlist = 'sudo iwlist wlan0 scan | grep "SSID"'
 net_cfg = "ls /etc/ | grep dhcp"
 ping_hub = "ping 192.168.0.1 -c 1"
 ping_google = "ping google.com -c 1"
@@ -142,7 +131,8 @@ if __name__ == '__main__':
 			os.system('sudo python /home/pi/Class_Minion_scripts/Class_Minion_image.py &')
 
 	while(any(x in os.popen(ps_test).read() for x in scriptNames)) == True:
-		if check_wifi() == "Connected":
+		if wifi_connected():
+			print('WiFi is connected: stop sampling.')
 			# Stop sampling
 			flash()
 			os.system(subpkill)
