@@ -1,11 +1,11 @@
-# Class Minion 2.0
+# Minion 3.0
 
 ## Setup RPi
 Class Minion runs with python 2.7
 
   1. Setup Raspbian Lite on an SD card and boot RPI Zero
   2. Update distribution `sudo apt-get update && sudo apt-get upgrade -y`   
-  3. Configure local, wifi, and enable ssh
+  3. Configure local, Wi-Fi, and enable ssh
   4. Connect to the pi over ssh and try:
 
     # Install pip (required for installation of Minion's drivers)
@@ -24,21 +24,50 @@ Class Minion runs with python 2.7
     sudo apt install git
     git clone https://github.com/OceanOptics/Class_Minion2
 
-    # Execute installation script
-    cd Class_Minion2
-    sudo python Class_Minion_install.py
-  
-
-When the RPi is turned on the script Class_Minion_DeploymentHandler.py is called. This script takes a picture and other measurements (optional), it then check if a known wifi is in range. If a wifi is in range it stays on, otherwise it turns off. This can result in a blocking behaviour if the wifi of choice is not available preventing to offload the data from the deployment. To test such behaviour the last line of Class_Minion_DeploymentHandler.py can be commented to prevent the halt to happen.
-
-    # turn on wifi
-    sudo ifconfig wlan0 up
-    # turn off wifi
-    sudo ifconfig wlan0 down
-    # run script to see if it finds wifi to connect and prevent halt of system
-    sudo python ~/Class_Minion_scripts/Class_Minion_DeploymentHandler.py
+    # Read installation script and run it by hand step by step (might need to reboot half-way through)
+    sudo python setup.py
 
 ## Setup Arduino Nano
-Upload Low_Power_Pi/Low_Power_Pi.ino to the Arduino Nano using Arduino IDE.
+Upload MinionSleepMCU/MinionSleepMCU.ino to the Arduino Nano using Arduino IDE.
 Note that depending on your version of Arduino Nano, you might have to check the (Arduino Nano (older version)) in the board parameters to prevent issues.
 
+## System Behaviour
+When the RPi is turned on the script `minion.py` is called. The script's logic is as follows:
+
+  1. Check if known Wi-Fi in range:
+     1. If available, the script stops and keep the RPi alive;
+     2. Otherwise, it continues
+  2. Check if the maximum number of pictures was captured:
+     1. If true, the script stops and the system goes into sleep forever. A power cycle is needed to boot the system.
+     2. Otherwise, it continues
+  3. It takes a burst of pictures.
+  4. Check if known Wi-Fi in range again
+     1. If available, the script stops and keep the RPi alive;
+     2. Otherwise, the system goes into deep sleep: powering off the RPi; which will be waked up by the Arduino X minutes later.
+     
+
+## Tips
+Test camera
+
+    raspistill -o picture.jpg
+
+Test flash
+    
+    python Class_Minion_tools/flasher.py
+
+Set Real-Time Clock (Assume computer time is synchronized with internet time)
+    
+    sudo hwclock -D -r
+    sudo hwclock -w
+
+Test Real-Time Clock (get time)
+
+    sudo hwclock -r
+
+Turn on Wi-Fi
+
+      sudo ifconfig wlan0 up
+
+Turn off Wi-Fi
+
+      sudo ifconfig wlan0 down
