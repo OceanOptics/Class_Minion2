@@ -19,14 +19,13 @@ __version__ = '3.0.0'
 """
 Parameters
 """
-deployment_duration = 10 * 24 + 12  # hours
-sample_rate = 4                     # number/hour  (programmed on micro-controller)
-PICTURES_PER_BURST = 5              # number of picture during burst
-BURST_SLEEP = 2                     # seconds between pictures during burst
-PICTURE_WITH_LIGHT = True           # Turn on light during picture (consumes more battery)
-PATH_TO_PICTURES = '/home/pi/Minion_pics'
-MAX_SAMPLES = deployment_duration * sample_rate * PICTURES_PER_BURST
-# MAX_SAMPLES = 1000
+CAMERA_MODE = 'VIDEO'               # VIDEO or PICTURE
+VIDEO_LENGTH = 30                   # length of video in seconds (only for mode='VIDEO_*')
+PICTURES_PER_BURST = 5              # number of pictures during burst (only for mode='PICTURE')
+BURST_SLEEP = 2                     # seconds between pictures during burst (only for mode='PICTURE')
+WITH_LIGHT = False                   # Turn on light during shot (consumes more battery)
+PATH_TO_DATA = '/home/pi/Minion_pics'
+MAX_SAMPLES = 10000
 
 
 """
@@ -85,35 +84,64 @@ def flash():
 
 
 class Camera:
-    def __init__(self):
+    def __init__(self, mode='PICTURE'):
         self.camera = PiCamera()
-        self.camera.resolution = (2592, 1944)
-        self.camera.framerate = 15
-        if not os.path.exists(PATH_TO_PICTURES):
-            os.mkdir(PATH_TO_PICTURES)
+        self.mode = mode
+        # Assume camera module V2
+        # if mode == 'VIDEO_HD_LFPS':
+        #     # Full field of view (4:3), FPS < 15
+        #     self.camera.resolution = (3280, 2464)
+        #     self.camera.framerate = 15
+        if mode == 'VIDEO':
+            # Full field of view (4:3), FPS < 40
+            self.camera.resolution = (1640, 1232)
+            self.camera.framerate = 30
+        elif mode == 'PICTURE':
+            self.camera.resolution = (3280, 2464)
+            self.camera.framerate = 15
+        if not os.path.exists(PATH_TO_DATA):
+            os.mkdir(PATH_TO_DATA)
 
     def warm_up(self):
         # TODO Verify that warm up is required to adjust camera light level
-        if PICTURE_WITH_LIGHT:
+        if WITH_LIGHT:
             print('Minion: Disco on!')
             GPIO.output(PIN_LIGHT, 1)
         self.camera.start_preview()
         sleep(10)
 
+    def capture(self):
+        if self.mode.startswith('VIDEO'):
+            self.video()
+        else:
+            self.timelapse()
+
+    def timelapse(self):
+        for i in range(PICTURES_PER_BURST):
+            self.picture()
+            sleep(BURST_SLEEP)
+
     def picture(self):
-        picture_id = str(len(os.listdir(PATH_TO_PICTURES)) + 1)
-        picture_time = os.popen("sudo hwclock -u -r").read().split('.', 1)[0].replace("  ", "_").replace(" ",
-                                                                                                         "_").replace(
-            ":", "-")
+        picture_id = str(len(os.listdir(PATH_TO_DATA)) + 1)
+        picture_time = os.popen("sudo hwclock -u -r").read().split('.', 1)[0] \
+            .replace("  ", "_").replace(" ", "_").replace(":", "-")
         picture_name = picture_id + "-" + picture_time + '.jpg'
         print('Minion: Taking selfie (' + picture_name + ').')
-        self.camera.capture(os.path.join(PATH_TO_PICTURES, picture_name))
+        self.camera.capture(os.path.join(PATH_TO_DATA, picture_name))
+
+    def video(self):
+        video_id = str(len(os.listdir(PATH_TO_DATA)) + 1)
+        video_time = os.popen("sudo hwclock -u -r").read().split('.', 1)[0] \
+            .replace("  ", "_").replace(" ", "_").replace(":", "-")
+        video_name = video_id + "-" + video_time + '.h264'
+        print('Minion: Recording video (' + video_name + ').')
+        self.camera.start_recording(os.path.join(PATH_TO_DATA, video_name))
+        self.camera.wait_recording(VIDEO_LENGTH)
+        self.camera.stop_recording()
 
     def cool_down(self):
-        # TODO Verify this step is required
-        sleep(5)
         self.camera.stop_preview()
-        if PICTURE_WITH_LIGHT:
+        if WITH_LIGHT:
             print('Minion: Disco off.')
             GPIO.output(PIN_LIGHT, 0)
 
@@ -148,17 +176,15 @@ if __name__ == '__main__':
         exit()  # Keep system alive
 
     # Check number of samples and go to sleep for ever if too many
-    if os.path.exists(PATH_TO_PICTURES) and len(os.listdir(PATH_TO_PICTURES)) > MAX_SAMPLES:
+    if os.path.exists(PATH_TO_DATA) and len(os.listdir(PATH_TO_DATA)) > MAX_SAMPLES:
         print('Minion: Trip is over.')
         GPIO.output(PIN_OVER, 0)
         shutdown_pi()
 
     # Take pictures
-    cam = Camera()
+    cam = Camera(CAMERA_MODE)
     cam.warm_up()
-    for i in range(PICTURES_PER_BURST):
-        cam.picture()
-        sleep(BURST_SLEEP)
+    cam.capture()
     cam.cool_down()
 
     # Check if recovered again (in case wifi didn't got a fix yet)
